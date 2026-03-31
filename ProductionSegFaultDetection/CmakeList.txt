@@ -1,0 +1,19 @@
+CXX=g++
+CXXFLAGS=-Wall -Wextra -pthread -O2 -g
+TARGET=segfault_demo
+DEBUG_TARGET=$(TARGET).debug
+
+all: $(TARGET)
+
+$(TARGET): segfault_demo.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $<
+
+debug-split: $(TARGET)
+	objcopy --only-keep-debug $(TARGET) $(DEBUG_TARGET)
+	objcopy --add-gnu-debuglink=$(DEBUG_TARGET) $(TARGET)
+	strip $(TARGET)  # Optional: fully strip main binary
+
+clean:
+	rm -f $(TARGET) $(DEBUG_TARGET) core*
+
+.PHONY: all debug-split clean
